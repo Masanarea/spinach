@@ -52,7 +52,7 @@ export const UserPage = () => {
             name="comment"
             id="comment"
             className="bg-white border border-gray-300 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            rows="6"
+            rows={6}
             placeholder="ここにコメントを入力"
             onChange={(event) => setComment(event.target.value)}
             value={comment}
