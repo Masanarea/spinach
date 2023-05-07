@@ -56,7 +56,7 @@ async function fetchSentences() {
     'https://api-for-datumou-app.vercel.app/getSentenceList?limit=1'
   )
   // const response = await fetch('https://api-for-datumou-app.vercel.app/getSentenceList?limit=10');
-  // const response = await fetch('https://api-for-datumou-app.vercel.app/getSentenceList?limit=50');
+  // const response = await fetch('https://api-for-datumou-app.vercel.app/getSentenceList?limit=52');
   const data = await response.json()
   return data.response_data
 }
