@@ -24,8 +24,12 @@ export const UserPage = () => {
 
       const data = await response.json()
       setGeneratedComment(data.comment)
+      console.log('データ全般')
+      console.log(data)
       console.log('生成されたコメント')
       console.log(data.comment)
+      console.log('error message')
+      console.log(data.errors)
     } catch (error) {
       console.error(error)
       setGeneratedComment(

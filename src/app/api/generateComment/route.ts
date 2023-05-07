@@ -46,6 +46,7 @@ export async function POST(request: Request): Promise<NextResponse> {
     console.error(error)
     return NextResponse.json({
       comment: '内部サーバーエラーが発生しました。(Internal Server Error)',
+      errors: error,
     })
   }
 }
