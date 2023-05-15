@@ -1,12 +1,48 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { GetServerSideProps } from 'next'
 
-export const UserPage = () => {
+export const UserPage: React.FC = () => {
   const [generatedComment, setGeneratedComment] = useState<string>('')
 
+  const [loading, setLoading] = useState<boolean>(false)
   const [comment, setComment] = useState<string>('')
+  const [refComments, setRefComments] = useState<string[]>([''])
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true)
+        // const response = await fetch('https://api.example.com/data');
+        // const data = await response.json();
+        const response = await getProjects()
+        // console.log('ここにSSGでのデータが表示されるはず')
+        // console.log(response)
+        setRefComments(response)
+        setLoading(false)
+      } catch (error) {
+        console.error('Error fetching data:', error)
+        setLoading(false)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchData()
+  }, [])
+
+  const stopPropagation = (event: React.MouseEvent) => {
+    event.stopPropagation()
+  }
 
   const handleGenerateComment = async () => {
+    if (comment.length > 150) {
+      alert(
+        'コメントは150文字以内で入力してください。\n(Please enter a comment within 150 characters.)'
+      )
+      return
+    }
+    setLoading(true)
     setGeneratedComment('検索結果 \n Loading...')
 
     try {
@@ -15,7 +51,7 @@ export const UserPage = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ premise: comment }),
+        body: JSON.stringify({ premise: comment, refComments: refComments }),
       })
 
       if (!response.ok) {
@@ -24,23 +60,63 @@ export const UserPage = () => {
 
       const data = await response.json()
       setGeneratedComment(data.comment)
-      console.log('データ全般')
-      console.log(data)
-      console.log('生成されたコメント')
-      console.log(data.comment)
-      console.log('error message')
-      console.log(data.errors)
+      // console.log('データ全般')
+      // console.log(data)
+      // console.log('生成されたコメント')
+      // console.log(data.comment)
+      // console.log('error message')
+      // console.log(data.errors)
+      setLoading(false)
     } catch (error) {
       console.error(error)
       setGeneratedComment(
         '申し訳ありませんが、サーバーで問題が発生しました。しばらくしてからもう一度お試しください。(We apologize, but a server-side issue occurred(about API from client side). Please try again later.)'
       )
+      setLoading(false)
       return null
     }
   }
 
   return (
     <div className="bg-gray-50 min-h-screen bg-gradient-to-br from-yellow-300 to-red-500">
+      {loading && (
+        <div
+          className="fixed z-10 inset-0 overflow-y-auto"
+          aria-labelledby="modal-title"
+          role="dialog"
+          aria-modal="true"
+          onClick={stopPropagation}
+        >
+          <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div
+              className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+              aria-hidden="true"
+            ></div>
+
+            <span
+              className="hidden sm:inline-block sm:align-middle sm:h-screen"
+              aria-hidden="true"
+            >
+              &#8203;
+            </span>
+
+            <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+              <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                <div className="sm:flex sm:items-start">
+                  <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                    <h3
+                      className="text-lg leading-6 font-medium text-gray-900"
+                      id="modal-title"
+                    >
+                      Loading...
+                    </h3>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       <div className="max-w-2xl mx-auto py-6 px-4 sm:px-6 lg:py-12 lg:px-8">
         <h1 className="text-3xl font-extrabold tracking-tight text-gray-900">
           チャットGPTコミュニケーター
@@ -73,4 +149,15 @@ export const UserPage = () => {
       </div>
     </div>
   )
+}
+
+async function getProjects() {
+  const res = await fetch(
+    'https://api-for-datumou-app.vercel.app/getSentenceList?limit=52',
+    { cache: 'no-store' }
+  )
+  const data = await res.json()
+  const referenceComments = data.response_data
+  console.log(referenceComments)
+  return referenceComments
 }
