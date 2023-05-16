@@ -36,9 +36,9 @@ export const UserPage: React.FC = () => {
   }
 
   const handleGenerateComment = async () => {
-    if (comment.length > 150) {
+    if (comment.length > 140) {
       alert(
-        'コメントは150文字以内で入力してください。\n(Please enter a comment within 150 characters.)'
+        'コメントは140文字以内で入力してください。\n(Please enter a comment within 150 characters.)'
       )
       return
     }
@@ -70,7 +70,7 @@ export const UserPage: React.FC = () => {
     } catch (error) {
       console.error(error)
       setGeneratedComment(
-        '申し訳ありませんが、サーバーで問題が発生しました。しばらくしてからもう一度お試しください。(We apologize, but a server-side issue occurred(about API from client side). Please try again later.)'
+        '申し訳ありませんが、サーバーで問題が発生しました。しばらくしてからもう一度お試しください。\n (お問い合わせはTwitter『https://twitter.com/Masa36940064』かメール『masa.php.engineer@gmail.com』からご連絡いただけると助かります！)'
       )
       setLoading(false)
       return null
@@ -153,7 +153,7 @@ export const UserPage: React.FC = () => {
 
 async function getProjects() {
   const res = await fetch(
-    'https://api-for-datumou-app.vercel.app/getSentenceList?limit=7',
+    'https://api-for-datumou-app.vercel.app/getSentenceList?limit=6',
     { cache: 'no-store' }
   )
   const data = await res.json()
