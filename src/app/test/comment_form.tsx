@@ -158,6 +158,6 @@ async function getProjects() {
   )
   const data = await res.json()
   const referenceComments = data.response_data
-  console.log(referenceComments)
+  // console.log(referenceComments)
   return referenceComments
 }
