@@ -153,7 +153,7 @@ export const UserPage: React.FC = () => {
 
 async function getProjects() {
   const res = await fetch(
-    'https://api-for-datumou-app.vercel.app/getSentenceList?limit=2',
+    'https://api-for-datumou-app.vercel.app/getSentenceList?limit=52',
     { cache: 'no-store' }
   )
   const data = await res.json()
