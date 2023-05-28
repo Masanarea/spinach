@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { GetServerSideProps } from 'next'
+import axios from 'axios'
 
 export const UserPage: React.FC = () => {
   const [generatedComment, setGeneratedComment] = useState<string>('')
@@ -46,20 +47,8 @@ export const UserPage: React.FC = () => {
     setGeneratedComment('検索結果 \n Loading...')
 
     try {
-      const response = await fetch('/api/generateComment', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ premise: comment, refComments: refComments }),
-      })
-
-      if (!response.ok) {
-        throw new Error(response.statusText)
-      }
-
-      const data = await response.json()
-      setGeneratedComment(data.comment)
+      const data = await generateComment()
+      // setGeneratedComment(data.comment)
       // console.log('データ全般')
       // console.log(data)
       // console.log('生成されたコメント')
@@ -73,6 +62,42 @@ export const UserPage: React.FC = () => {
         '申し訳ありませんが、サーバーで問題が発生しました。しばらくしてからもう一度お試しください。\n (お問い合わせはTwitter『https://twitter.com/Masa36940064』かメール『masa.php.engineer@gmail.com』からご連絡いただけると助かります！)'
       )
       setLoading(false)
+      return null
+    }
+  }
+
+  const generateComment = async () => {
+    const referenceSentence: string = refComments.join('\n\n')
+    const prompt = `サンプルを参考にして、以下のユーザーが記述したコメントをより読み手に明確に内容が伝わるように修正して下さい\n\n ユーザーが記述したコメント : 『 ${comment} 』 \n\n サンプル : 『 ${referenceSentence} 』`
+    const API_URL = 'https://api.openai.com/v1/'
+    const MODEL = 'gpt-3.5-turbo'
+    // console.log('プロンプトの内容')
+    // console.log(prompt)
+
+    try {
+      const response = await axios.post(
+        `${API_URL}chat/completions`,
+        {
+          model: MODEL,
+          messages: [
+            {
+              role: 'user',
+              content: prompt,
+            },
+          ],
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${process.env.NEXT_PUBLIC_OPENAI_API_KEY}`,
+          },
+        }
+      )
+
+      const generatedText: string = response.data.choices[0].message.content
+      return generatedText
+    } catch (error) {
+      console.error(error)
       return null
     }
   }
