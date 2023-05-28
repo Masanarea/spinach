@@ -178,8 +178,7 @@ export const UserPage: React.FC = () => {
 
 async function getProjects() {
   const res = await fetch(
-    'https://api-for-datumou-app.vercel.app/getSentenceList?limit=4',
-    { cache: 'no-store' }
+    'https://api-for-datumou-app.vercel.app/getSentenceList?limit=4'
   )
   const data = await res.json()
   const referenceComments = data.response_data
