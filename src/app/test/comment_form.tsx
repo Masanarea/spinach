@@ -1,6 +1,5 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { GetServerSideProps } from 'next'
 import axios from 'axios'
 
 export const UserPage: React.FC = () => {
@@ -94,11 +93,10 @@ export const UserPage: React.FC = () => {
         }
       )
 
-      const generatedText: string = response.data.choices[0].message.content
-      return generatedText
+      return response?.data?.choices[0]?.message?.content || ''
     } catch (error) {
       console.error(error)
-      return null
+      return ''
     }
   }
 
