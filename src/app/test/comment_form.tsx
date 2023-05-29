@@ -47,8 +47,8 @@ export const UserPage: React.FC = () => {
     setGeneratedComment('検索結果 \n Loading...')
 
     try {
-      const data = await generateComment()
-      // setGeneratedComment(data.comment)
+      const comment = await generateComment()
+      setGeneratedComment(comment)
       // console.log('データ全般')
       // console.log(data)
       // console.log('生成されたコメント')
